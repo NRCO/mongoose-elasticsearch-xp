@@ -44,11 +44,11 @@
   "author": "Jean-Baptiste Demonte <jbdemonte@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@elastic/elasticsearch": "^8.16.2",
-    "mongoose": "^8.8.2"
+    "@elastic/elasticsearch": "^7.4.2",
+    "mongoose": "^8.8.3"
   },
   "devDependencies": {
-    "@elastic/elasticsearch": "^8.16.2",
+    "@elastic/elasticsearch": "^7.4.2",
     "@eslint/js": "^9.15.0",
     "chai": "^5.1.2",
     "coveralls": "^3.1.1",
