@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-const mongoose = require('mongoose');
-const utils = require('../utils');
-const plugin = require('../../').v5;
+const mongoose = require("mongoose");
+const utils = require("../utils");
+const plugin = require("../../").v5;
 
-describe('countOnly', () => {
+describe("countOnly", () => {
   utils.setup();
   let UserModel;
 
@@ -15,11 +15,11 @@ describe('countOnly', () => {
     });
 
     UserSchema.plugin(plugin);
-    UserModel = mongoose.model('User', UserSchema);
+    UserModel = mongoose.model("User", UserSchema);
 
-    const john = new UserModel({ name: 'John', age: 35 });
-    const jane = new UserModel({ name: 'Jane', age: 34 });
-    const bob = new UserModel({ name: 'Bob', age: 36 });
+    const john = new UserModel({ name: "John", age: 35 });
+    const jane = new UserModel({ name: "Jane", age: 34 });
+    const bob = new UserModel({ name: "Bob", age: 36 });
 
     return utils
       .deleteModelIndexes(UserModel)
@@ -27,18 +27,18 @@ describe('countOnly', () => {
       .then(() =>
         utils.Promise.all(
           [john, jane, bob].map(
-            user =>
-              new utils.Promise(resolve => {
-                user.on('es-indexed', resolve);
+            (user) =>
+              new utils.Promise((resolve) => {
+                user.on("es-indexed", resolve);
                 user.save();
-              })
-          )
-        )
+              }),
+          ),
+        ),
       )
       .then(() => UserModel.esRefresh());
   });
 
-  it('should return count', () => {
+  it("should return count", () => {
     return UserModel.esCount(
       {
         bool: {
@@ -46,13 +46,13 @@ describe('countOnly', () => {
           filter: { range: { age: { gte: 35 } } },
         },
       },
-      { countOnly: true }
-    ).then(count => {
+      { countOnly: true },
+    ).then((count) => {
       expect(count).to.eql(2);
     });
   });
 
-  it('should return 0', () => {
+  it("should return 0", () => {
     return UserModel.esCount(
       {
         bool: {
@@ -60,13 +60,13 @@ describe('countOnly', () => {
           filter: { range: { age: { gte: 100 } } },
         },
       },
-      { countOnly: true }
-    ).then(count => {
+      { countOnly: true },
+    ).then((count) => {
       expect(count).to.eql(0);
     });
   });
 
-  it('should return count when defined in plugin', () => {
+  it("should return count when defined in plugin", () => {
     utils.deleteMongooseModels();
 
     const UserSchema = new mongoose.Schema({
@@ -76,19 +76,19 @@ describe('countOnly', () => {
 
     UserSchema.plugin(plugin, { countOnly: true });
 
-    const UserModelCountOnly = mongoose.model('User', UserSchema);
+    const UserModelCountOnly = mongoose.model("User", UserSchema);
 
     return UserModelCountOnly.esCount({
       bool: {
         must: { match_all: {} },
         filter: { range: { age: { gte: 35 } } },
       },
-    }).then(count => {
+    }).then((count) => {
       expect(count).to.eql(2);
     });
   });
 
-  it('should overwrite defined in plugin value', () => {
+  it("should overwrite defined in plugin value", () => {
     utils.deleteMongooseModels();
 
     const UserSchema = new mongoose.Schema({
@@ -98,7 +98,7 @@ describe('countOnly', () => {
 
     UserSchema.plugin(plugin, { countOnly: true });
 
-    const UserModelCountOnly = mongoose.model('User', UserSchema);
+    const UserModelCountOnly = mongoose.model("User", UserSchema);
 
     return UserModelCountOnly.esCount(
       {
@@ -107,8 +107,8 @@ describe('countOnly', () => {
           filter: { range: { age: { gte: 35 } } },
         },
       },
-      { countOnly: false }
-    ).then(result => {
+      { countOnly: false },
+    ).then((result) => {
       expect(result.count).to.eql(2);
     });
   });
